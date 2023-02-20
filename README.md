@@ -1,4 +1,11 @@
-# Hydrogen template: Hello World
+# [WIP] Fly.io deployment for Hydrogen v2 hello world on Remix.
+
+Steps to deploy:
+1. Install fly.io CLI
+2. `fly launch`
+
+
+## Hydrogen template: Hello World
 
 Hydrogen is Shopify’s stack for headless commerce. Hydrogen is designed to dovetail with [Remix](https://remix.run/), Shopify’s full stack web framework. This template contains a **minimal setup** of components, queries and tooling to get started with Hydrogen.
 
