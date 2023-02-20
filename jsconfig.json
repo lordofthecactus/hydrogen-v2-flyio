@@ -25,5 +25,5 @@
   "include": [
     "./**/*.js",
     "./**/*.jsx"
-  ]
+, "app/styles/entry.server.tsx", "app/entry.server.tsx", "server.mjs"  ]
 }
