@@ -5,10 +5,10 @@
   "version": "0.0.0",
   "scripts": {
     "build": "remix build",
-    "dev": "shopify hydrogen dev",
-    "preview": "npm run build && shopify hydrogen preview",
+    "dev": "cross-env NODE_ENV=development node ./server.js",
     "lint": "eslint --no-error-on-unmatched-pattern --ext .js,.ts,.jsx,.tsx .",
-    "g": "shopify hydrogen generate"
+    "g": "shopify hydrogen generate",
+    "start": "cross-env NODE_ENV=production node ./server.js"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
@@ -20,6 +20,7 @@
     "@shopify/hydrogen": "^2023.1.4",
     "@shopify/remix-oxygen": "^1.0.3",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "graphql": "^16.6.0",
     "graphql-tag": "^2.12.6",
