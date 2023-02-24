@@ -1,6 +1,7 @@
 // Virtual entry point for the app
 // const remixBuild = require('@remix-run/dev/server-build');
 const path = require('path');
+require('dotenv').config();
 const express = require('express');
 const {createRequestHandler} = require('@remix-run/express');
 const {createStorefrontClient} = require('@shopify/hydrogen');
@@ -9,16 +10,23 @@ const {createStorefrontClient} = require('@shopify/hydrogen');
 const app = express();
 const BUILD_DIR = path.join(process.cwd(), 'build');
 
-// const env = process.env;
 const env = {
-  PORT: 8080,
-  SESSION_SECRET: 'foobar',
-  PUBLIC_STOREFRONT_API_TOKEN: '3b580e70970c4528da70c98e097c2fa0',
-  PUBLIC_STOREFRONT_API_VERSION: '2023-01',
-  PUBLIC_STORE_DOMAIN: 'hydrogen-preview.myshopify.com',
+  PUBLIC_STOREFRONT_API_TOKEN: process.env.PUBLIC_STOREFRONT_API_TOKEN,
+  PUBLIC_STOREFRONT_DOMAIN: process.env.PUBLIC_STOREFRONT_DOMAIN,
+  PRIVATE_STOREFRONT_API_TOKEN: process.env.PRIVATE_STOREFRONT_API_TOKEN,
+  SESSION_SECRET: process.env.SESSION_SECRET,
+  PUBLIC_STORE_DOMAIN: process.env.PUBLIC_STORE_DOMAIN,
 };
+// const env = {
+//   // PORT: 8080,
+//   SESSION_SECRET: 'foobar',
+//   PUBLIC_STOREFRONT_API_TOKEN: '3b580e70970c4528da70c98e097c2fa0',
+//   PUBLIC_STOREFRONT_API_VERSION: '2023-01',
+//   PUBLIC_STORE_DOMAIN: 'hydrogen-preview.myshopify.com',
+// };
 
-const port = env.PORT || 3000;
+const port =
+  process.env.PORT || process.env.NODE_ENV === 'development' ? 3000 : 8080;
 
 // Remix fingerprints its assets so we can cache forever.
 app.use(
@@ -51,8 +59,7 @@ app.all('*', (req, res, next) => {
    */
   return createRequestHandler({
     build: require(BUILD_DIR),
-    // mode: process.env.NODE_ENV,
-    mode: 'development',
+    mode: process.env.NODE_ENV,
     getLoadContext: () => ({storefront, env}),
   })(req, res, next);
 });
