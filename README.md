@@ -1,8 +1,9 @@
-# [WIP] Fly.io deployment for Hydrogen v2 hello world on Remix.
+# Fly.io deployment for Hydrogen v2 hello world on Remix.
 
 Steps to deploy:
 1. Install fly.io CLI
 2. `fly launch`
+3. `npm run deploy`
 
 
 ## Hydrogen template: Hello World

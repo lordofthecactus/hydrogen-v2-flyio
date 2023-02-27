@@ -1,11 +1,8 @@
 // Virtual entry point for the app
-// const remixBuild = require('@remix-run/dev/server-build');
 const path = require('path');
-require('dotenv').config();
 const express = require('express');
 const {createRequestHandler} = require('@remix-run/express');
 const {createStorefrontClient} = require('@shopify/hydrogen');
-// const {getBuyerIp} = require('@shopify/remix-oxygen');
 
 const app = express();
 const BUILD_DIR = path.join(process.cwd(), 'build');
@@ -17,16 +14,9 @@ const env = {
   SESSION_SECRET: process.env.SESSION_SECRET,
   PUBLIC_STORE_DOMAIN: process.env.PUBLIC_STORE_DOMAIN,
 };
-// const env = {
-//   // PORT: 8080,
-//   SESSION_SECRET: 'foobar',
-//   PUBLIC_STOREFRONT_API_TOKEN: '3b580e70970c4528da70c98e097c2fa0',
-//   PUBLIC_STOREFRONT_API_VERSION: '2023-01',
-//   PUBLIC_STORE_DOMAIN: 'hydrogen-preview.myshopify.com',
-// };
 
 const port =
-  process.env.PORT || process.env.NODE_ENV === 'development' ? 3000 : 8080;
+  process.env.PORT || (process.env.NODE_ENV === 'development' ? 3000 : 8080);
 
 // Remix fingerprints its assets so we can cache forever.
 app.use(
@@ -39,6 +29,9 @@ app.use(
 app.use(express.static('public', {maxAge: '1h'}));
 
 app.all('*', (req, res, next) => {
+  if (process.env.NODE_ENV === 'development') {
+    purgeRequireCache();
+  }
   /**
    * Create Hydrogen's Storefront client.
    */
@@ -50,7 +43,7 @@ app.all('*', (req, res, next) => {
     storeDomain: `https://${env.PUBLIC_STORE_DOMAIN}`,
     storefrontApiVersion: env.PUBLIC_STOREFRONT_API_VERSION || '2023-01',
     storefrontId: env.PUBLIC_STOREFRONT_ID,
-    // requestGroupId: request.headers.get('request-id'),
+    // requestGroupId: req.headers.get('request-id'),
   });
 
   /**
@@ -67,3 +60,16 @@ app.all('*', (req, res, next) => {
 app.listen(port, () => {
   console.log(`Express server listening on port ${port}`);
 });
+
+function purgeRequireCache() {
+  // purge require cache on requests for "server side HMR" this won't let
+  // you have in-memory objects between requests in development,
+  // alternatively you can set up nodemon/pm2-dev to restart the server on
+  // file changes, but then you'll have to reconnect to databases/etc on each
+  // change. We prefer the DX of this, so we've included it for you by default
+  for (const key in require.cache) {
+    if (key.startsWith(BUILD_DIR)) {
+      delete require.cache[key];
+    }
+  }
+}
